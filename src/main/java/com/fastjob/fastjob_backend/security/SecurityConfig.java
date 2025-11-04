@@ -32,7 +32,13 @@ public class SecurityConfig {
     @Qualifier("unifiedUserDetailsService")
     private final UserDetailsService userDetailsService;
     public static final String[] PUBLIC_URLS = {
-
+            "/api/v1/auth/**",
+            "/**",
+            "/v3/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/webjars/**"
     };
 
     @Bean
@@ -42,7 +48,6 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URLS).permitAll()
-                        .requestMatchers("/api/v1/users").hasAnyRole("ADMIN", "SUPERADMIN", "MANAGER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -76,9 +81,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(Arrays.asList(
-                "https://web.fidobox.online", "http://localhost:5173", "https://bendeptrai.com", "http://bendeptrai.com",
-                "http://103.179.191.70", "103.179.191.70", "http://103.179.191.70:82", "http://103.179.191.70:81","http://103.179.191.70:81", "https://web.bendeptrai.com",
-                "http://localhost:3000", "https://api.fidobox.online", "https://admin.bendeptrai.com", "https://admin.scanmee.com.vn", "http://localhost:"
+                "*"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
