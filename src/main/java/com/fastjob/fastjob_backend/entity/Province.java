@@ -19,7 +19,7 @@ public class Province {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "province_code")
+//    @Column(name = "province_code")
     private String provinceCode;
     private String name;
     private String shortName;

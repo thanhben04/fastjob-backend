@@ -1,6 +1,7 @@
 package com.fastjob.fastjob_backend.dto.response.job;
 
 import com.fastjob.fastjob_backend.entity.Job;
+import com.fastjob.fastjob_backend.entity.Province;
 
 public record JobResponse(
         Long id,
@@ -11,8 +12,7 @@ public record JobResponse(
         Double minSalary,
         Double maxSalary,
         String address,
-        String provinceCode,
-        Integer experience,
+//        String provinceCode,
         String educationLevel,   // label tiếng Việt
         String jobLevel,         // label tiếng Việt
         Integer quantity,
@@ -21,7 +21,9 @@ public record JobResponse(
         String companyLogo,
         String industry,
         String companySize,
-        String expirationDate
+        String expirationDate,
+        String jobType,
+        Province province
 ) {
 
     public static JobResponse fromEntity(Job job) {
@@ -34,17 +36,18 @@ public record JobResponse(
                 job.getMinSalary(),
                 job.getMaxSalary(),
                 job.getAddress(),
-                job.getProvinceCode(),
-                job.getExperience(),
-                job.getEducationLevelEnum() != null ? job.getEducationLevelEnum().getLabel() : null,
-                job.getJobLevel() != null ? job.getJobLevel().getLabel() : null,
+//                job.getProvinceCode(),
+                job.getEducationLevelEnum().getLabel(),
+                job.getJobLevel().getLabel(),
                 job.getQuantity(),
-                job.getWorkType() != null ? job.getWorkType().getLabel() : null,
+                job.getWorkType().getLabel(),
                 job.getCompany().getCompanyName(),
                 job.getCompany().getAvatarUrl(),
                 job.getCompany().getIndustry(),
                 job.getCompany().getCompanySizeEnum() != null ? job.getCompany().getCompanySizeEnum().getLabel() : null,
-                job.getExpirationDate() != null ? job.getExpirationDate().toString() : null
+                job.getExpirationDate() != null ? job.getExpirationDate().toString() : null,
+                job.getJobType().toString(),
+                job.getProvince()
         );
     }
 }

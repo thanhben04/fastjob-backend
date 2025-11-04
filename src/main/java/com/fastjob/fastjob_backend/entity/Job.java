@@ -1,19 +1,17 @@
 package com.fastjob.fastjob_backend.entity;
 
-import com.fastjob.fastjob_backend.constant.EducationLevelEnum;
-import com.fastjob.fastjob_backend.constant.JobLevelEnum;
-import com.fastjob.fastjob_backend.constant.WorkTypeEnum;
+import com.fastjob.fastjob_backend.constant.*;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Table(name = "jobs")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Setter
 public class Job {
@@ -24,10 +22,13 @@ public class Job {
 
     private String title;
 
+    @Column(name = "requirement", columnDefinition = "TEXT")
     private String requirement;
 
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "benefit", columnDefinition = "TEXT")
     private String benefit;
 
     private Double minSalary;
@@ -36,9 +37,11 @@ public class Job {
 
     private String address;
 
-    private String provinceCode;
+//    private String provinceCode;
 
-    private Integer experience; // in years
+    @Enumerated(EnumType.STRING)
+    @Column(name = "experience_level", nullable = true)
+    private ExperienceLevelEnum experienceLevelEnum;
 
 
     @Enumerated(EnumType.STRING) // Lưu dạng text thay vì số
@@ -48,6 +51,10 @@ public class Job {
     @Enumerated(EnumType.STRING)
     @Column(name = "job_level", nullable = false)
     private JobLevelEnum jobLevel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_type", nullable = false)
+    private JobTypeEnum jobType;
 
     // số lượng tuyển
     private Integer quantity;
@@ -67,5 +74,7 @@ public class Job {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "province_code", referencedColumnName = "provinceCode")
+    private Province province;
 }

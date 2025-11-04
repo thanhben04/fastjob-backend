@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -40,6 +41,39 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**"
     };
+
+    public static final String[] CORS =
+            new String[] {
+                    "http://admin.2handvn.com",
+                    "http://www.2handvn.com",
+                    "http://api.2handvn.com",
+                    "https://api.2handvn.com",
+                    "http://seller.2handvn.com",
+                    "http://2handvn.com",
+                    "http://verify.2handvn.com",
+                    "https://admin.2handvn.com",
+                    "https://www.2handvn.com",
+                    "https://seller.2handvn.com",
+                    "https://2handvn.com",
+                    "https://verify.2handvn.com",
+                    "https://web.fidobox.online",
+                    "http://localhost:5173",
+                    "https://bendeptrai.com",
+                    "http://bendeptrai.com",
+                    "http://103.179.191.70",
+                    "103.179.191.70",
+                    "http://103.179.191.70:82",
+                    "http://103.179.191.70:81",
+                    "http://103.179.191.70:81",
+                    "https://web.bendeptrai.com",
+                    "http://localhost:3000",
+                    "https://127.0.0.1:3000",
+                    "http://127.0.0.1:3000",
+                    "https://api.fidobox.online",
+                    "https://admin.bendeptrai.com",
+                    "http://192.168.1.56:5173",
+                    "https://admin.scanmee.com.vn"
+            };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -80,9 +114,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList(
-                "*"
-        ));
+        configuration.setAllowedOrigins(List.of(CORS));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

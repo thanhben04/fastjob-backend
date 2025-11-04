@@ -1,9 +1,12 @@
 package com.fastjob.fastjob_backend.dto.request.job;
-import com.fastjob.fastjob_backend.constant.*;
+
+import com.fastjob.fastjob_backend.constant.EducationLevelEnum;
+import com.fastjob.fastjob_backend.constant.JobLevelEnum;
+import com.fastjob.fastjob_backend.constant.WorkTypeEnum;
 
 import java.time.LocalDate;
 
-public record CreateJobRequest(
+public record UpdateJobRequest(
         String title,
         String requirement,
         String description,
@@ -12,12 +15,12 @@ public record CreateJobRequest(
         Double maxSalary,
         String address,
         String provinceCode,
-        ExperienceLevelEnum experience,                  // số năm kinh nghiệm
+        Integer experience,
         EducationLevelEnum educationLevelEnum,
         JobLevelEnum jobLevel,
         Integer quantity,
         WorkTypeEnum workType,
         LocalDate expirationDate,
-        Long companyId,
-        JobTypeEnum jobType
+        Long companyId
 ) {}
+
