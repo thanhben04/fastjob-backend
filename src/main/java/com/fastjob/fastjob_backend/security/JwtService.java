@@ -22,7 +22,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private final String SECRET_KEY = "123123123123123";
+    private final String SECRET_KEY = "3122f08a8afa14e4deccff2e91167c28";
 
     @Autowired
     UserSessionRepository userSessionRepository;
@@ -72,6 +72,15 @@ public class JwtService {
                 .getBody();
 
         return claims.get("userId", Long.class);
+    }
+
+    public String extractUsername (String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public Date extractExpiration(String token) {
