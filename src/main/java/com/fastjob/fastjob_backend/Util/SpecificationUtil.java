@@ -2,6 +2,7 @@ package com.fastjob.fastjob_backend.Util;
 
 import com.fastjob.fastjob_backend.entity.Company;
 import com.fastjob.fastjob_backend.entity.Job;
+import com.fastjob.fastjob_backend.entity.Province;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,10 +170,10 @@ public class SpecificationUtil {
                 ));
             }
 
-            // Lọc theo provinceCode
+            // Lọc theo provinceCode (truy cập qua quan hệ province)
             if (provinceCode != null && !provinceCode.trim().isEmpty()) {
                 predicates.add(criteriaBuilder.equal(
-                        criteriaBuilder.lower(root.get("provinceCode")),
+                        criteriaBuilder.lower(root.get("province").get("provinceCode")),
                         provinceCode.toLowerCase().trim()));
             }
 
@@ -220,6 +221,96 @@ public class SpecificationUtil {
             } else {
                 // Mặc định sắp xếp theo createdAt giảm dần
                 query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    /**
+     * Xây dựng Specification cho Province với tìm kiếm đa trường và sắp xếp
+     *
+     * @param search Từ khóa tìm kiếm (tìm trong name, shortName, provinceCode, code)
+     * @param country Lọc theo quốc gia
+     * @param placeType Lọc theo loại địa điểm
+     * @param provinceCode Lọc theo mã tỉnh/thành phố
+     * @param jobType Lọc theo loại công việc (join với Job)
+     * @param sortBy Trường để sắp xếp
+     * @param sortDir Hướng sắp xếp (asc/desc)
+     * @return Specification cho Province
+     */
+    public static Specification<Province> buildProvinceSpecification(
+            String search,
+            String country,
+            String placeType,
+            String provinceCode,
+            String jobType,
+            String sortBy,
+            String sortDir) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Tìm kiếm đa trường: name, shortName, provinceCode, code
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.toLowerCase().trim() + "%";
+                Predicate namePredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("name")), searchPattern);
+                Predicate shortNamePredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("shortName")), searchPattern);
+                Predicate codePredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("code")), searchPattern);
+
+                predicates.add(criteriaBuilder.or(
+                        namePredicate,
+                        shortNamePredicate,
+                        codePredicate
+                ));
+            }
+
+            // Lọc theo country
+            if (country != null && !country.trim().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(
+                        criteriaBuilder.lower(root.get("country")),
+                        country.toLowerCase().trim()));
+            }
+
+            // Lọc theo placeType
+            if (placeType != null && !placeType.trim().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(
+                        criteriaBuilder.lower(root.get("placeType")),
+                        placeType.toLowerCase().trim()));
+            }
+
+            // Lọc theo provinceCode
+            if (provinceCode != null && !provinceCode.trim().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(
+                        criteriaBuilder.lower(root.get("provinceCode")),
+                        provinceCode.toLowerCase().trim()));
+            }
+
+            // Lọc theo jobType (sử dụng subquery để tìm Province có Job với jobType cụ thể)
+            if (jobType != null && !jobType.trim().isEmpty()) {
+                jakarta.persistence.criteria.Subquery<Long> jobSubquery = query.subquery(Long.class);
+                jakarta.persistence.criteria.Root<Job> jobRoot = jobSubquery.from(Job.class);
+                jobSubquery.select(jobRoot.get("province").get("id"))
+                        .where(criteriaBuilder.equal(
+                                criteriaBuilder.upper(jobRoot.get("jobType").as(String.class)),
+                                jobType.toUpperCase().trim()));
+                predicates.add(criteriaBuilder.in(root.get("id")).value(jobSubquery));
+            }
+
+            query.distinct(true);
+
+            // Sắp xếp
+            if (sortBy != null && !sortBy.trim().isEmpty()) {
+                if (sortDir != null && sortDir.equalsIgnoreCase("asc")) {
+                    query.orderBy(criteriaBuilder.asc(root.get(sortBy)));
+                } else {
+                    query.orderBy(criteriaBuilder.desc(root.get(sortBy)));
+                }
+            } else {
+                // Mặc định sắp xếp theo id tăng dần
+                query.orderBy(criteriaBuilder.asc(root.get("id")));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

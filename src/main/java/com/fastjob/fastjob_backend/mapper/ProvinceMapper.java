@@ -9,30 +9,31 @@ import java.util.List;
 @Component
 public class ProvinceMapper {
 
-    public ProvinceDTO toDTO (Province province) {
-        if ( province == null ) {
+    public ProvinceDTO toDTO(Province province) {
+        if (province == null) {
             return null;
         }
 
-        ProvinceDTO provinceDTO = new ProvinceDTO();
-
-        provinceDTO.setId( province.getId() );
-        provinceDTO.setName( province.getName() );
-        provinceDTO.setProvinceCode( province.getProvinceCode() );
-
-        return provinceDTO;
+        return ProvinceDTO.builder()
+                .id(province.getId())
+                .provinceCode(province.getProvinceCode())
+                .name(province.getName())
+                .shortName(province.getShortName())
+                .code(province.getCode())
+                .placeType(province.getPlaceType())
+                .country(province.getCountry())
+                .createdAt(province.getCreatedAt())
+                .updatedAt(province.getUpdatedAt())
+                .build();
     }
 
-    public List<ProvinceDTO> toProvinceDTOs (List<Province> provinces) {
-        if ( provinces == null ) {
+    public List<ProvinceDTO> toProvinceDTOs(List<Province> provinces) {
+        if (provinces == null) {
             return null;
         }
 
-        List<ProvinceDTO> list = new java.util.ArrayList<ProvinceDTO>( provinces.size() );
-        for ( Province province : provinces ) {
-            list.add( toDTO( province ) );
-        }
-
-        return list;
+        return provinces.stream()
+                .map(this::toDTO)
+                .toList();
     }
 }
